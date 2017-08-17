@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <base th:href='${basePath}'/>
+    <meta charset="UTF-8"/>
+    <title>添加</title>
+    <link rel="stylesheet" href="plugins/layui/css/layui.css" media="all"/>
+    <link rel="stylesheet" href="css/global.css" media="all"/>
+    <link rel="stylesheet" href="plugins/font-awesome/css/font-awesome.min.css"/>
+    <link rel="stylesheet" href="css/table.css"/>
+</head>
+<body>
+<div style="margin: 15px;">
+    <form class="layui-form" name="form">
+        <div class="layui-form-item">
+            <label class="layui-form-label">名字</label>
+            <div class="layui-input-block">
+                <input type="text" name="name" lay-verify="required" autocomplete="off"
+                       placeholder="请输入名字" class="layui-input"/>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">email</label>
+            <div class="layui-input-block">
+                <input type="text" name="email" lay-verify="email" autocomplete="off"
+                       placeholder="请输入邮箱" class="layui-input"/>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit="" lay-filter="form">提交</button>
+            </div>
+        </div>
+    </form>
+</div>
+<script type="text/javascript" src="plugins/layui/layui.js"></script>
+<script type="text/javascript" src="/js/jquery-1.11.1.min.js"></script>
+<script>
+    layui.use(['form'], function () {
+        var form = layui.form(),
+            layer = layui.layer,
+            $ = layui.jquery;
+
+        //监听提交
+        form.on('submit(form)', function (data) {
+            $.ajax({
+                type: "POST",
+                url: "/alarm-contacts/create",
+                data: data.field,
+                //成功返回之后调用的函数
+                success: function (data) {
+                    if (data == 0) {
+                        layer.msg('操作成功!', {
+                            icon: 1,
+                            time: 1000 //2秒关闭（如果不配置，默认是3秒）
+                        }, function () {
+                            var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+                            parent.layer.close(index);
+                            parent.window.location.reload();
+                        });
+                    }
+
+                },
+                error: function () {
+                    layer.msg('操作失败!');
+                }
+            });
+            return false;
+        });
+    });
+</script>
+</body>
+</html>

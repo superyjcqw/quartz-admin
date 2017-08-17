@@ -1,0 +1,193 @@
+﻿<!DOCTYPE html>
+
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+
+	<head>
+		<base th:href='${basePath}'/>
+		<meta charset="UTF-8"/>
+		<title>列表</title>
+		<link rel="stylesheet" href="plugins/layui/css/layui.css" media="all" />
+		<link rel="stylesheet" href="css/global.css" media="all"/>
+		<link rel="stylesheet" href="plugins/font-awesome/css/font-awesome.min.css"/>
+		<link rel="stylesheet" href="css/table.css" />
+	</head>
+
+	<body>
+		<div class="admin-main">
+
+			<blockquote class="layui-elem-quote">
+				<a href="javascript:" th:onclick="'add();'" class="layui-btn layui-btn-small" id="add">
+					<i class="layui-icon">&#xe608;</i> 添加
+				</a>
+				<a href="javascript:void(0);"  onclick="location.reload()" class="layui-btn layui-btn-small" id="refresh">
+					<i class="layui-icon">&#x1002;</i> 刷新
+				</a>
+			</blockquote>
+			<fieldset class="layui-elem-field">
+				<legend>数据列表</legend>
+				<div class="layui-field-box layui-form">
+					<table class="layui-table admin-table">
+						<thead>
+							<tr>
+								<th style="width: 30px;">编号</th>
+								<th>名称</th>
+								<th>实例名</th>
+								<th>数据源</th>
+								<th>节点数</th>
+								<th>备注</th>
+								<th>操作</th>
+							</tr>
+						</thead>
+						<tbody id="content">
+						<tr th:each="quartzCluster,quartzClusterStat:${quartzClusterList}">
+							<th th:text=" ${quartzClusterStat.index}+1+((${currIndex} -1 )*${pageSize})"></th>
+							<th th:text="${quartzCluster.name}"></th>
+							<th th:text="${quartzCluster.instanceName}"></th>
+							<th th:utext="${quartzCluster.dataSource}"></th>
+							<th th:text="${quartzCluster.nodeNum}"></th>
+							<th th:text="${quartzCluster.memo}"></th>
+							<th>
+								<a href="javascript:" th:onclick="'detail(\''+${quartzCluster.id}+'\');'" class="layui-btn layui-btn-normal layui-btn-mini">预览</a>
+								<a href="javascript:" th:onclick="'edit(\''+${quartzCluster.id}+'\');'" class="layui-btn layui-btn-mini">编辑</a>
+								<a href="javascript:" th:onclick="'del(\''+${quartzCluster.id}+'\');'" class="layui-btn layui-btn-danger layui-btn-mini">删除</a>
+								<a href="javascript:" th:onclick="'toJobListTab(\''+${quartzCluster.name}+'\');'" class="layui-btn layui-btn-danger layui-btn-mini">任务列表</a>
+								<a href="javascript:" th:onclick="'toJobRunningListTab(\''+${quartzCluster.name}+'\');'" class="layui-btn layui-btn-danger layui-btn-mini">正在运行</a>
+							</th>
+						</tr>
+						</tbody>
+					</table>
+				</div>
+			</fieldset>
+			<br/>
+			<br/>
+			<div class="admin-table-page">
+			<input type="hidden" name="currIndex" th:value="${currIndex}" />
+			<input type="hidden" name="pages" th:value="${pages}" />
+			<div id="page" style="padding-left: 20px"></div>
+			</div>
+		</div>
+
+		<script type="text/javascript" src="plugins/layui/layui.js"></script>
+
+		<script th:inline="Javascript">
+
+            layui.use(['laypage', 'layer'], function() {
+                var laypage = layui.laypage;
+                laypage({
+                    cont: 'page',
+                    pages: [[${pages}]],
+                    curr: [[${currIndex}]],
+                    jump: function(obj, first){//点击页码出发的事件
+                        if(!first){//是否首次进入页面
+                            var current = obj.curr;//获取点击的页码
+                            window.location.href ="/cluster/list?pageIndex="+current;
+                        }
+                    }
+                });
+            });
+
+            function toJobListTab(clusterName) {
+				var tab = parent.tab;
+                var tabId = tab.getTabId('任务管理');
+				if (tabId != -1) {
+				    tab.deleteTab(tabId);
+				}
+				tab.tabAdd({
+                    "title": "任务管理",
+                    "icon": "&#xe63c;",
+                    "href": "job/list?clusterName=" + clusterName
+                });
+            }
+
+            function toJobRunningListTab(clusterName) {
+				var tab = parent.tab;
+                var tabId = tab.getTabId('正在运行任务');
+				if (tabId != -1) {
+				    tab.deleteTab(tabId);
+				}
+				tab.tabAdd({
+                    "title": "正在运行任务",
+                    "icon": "&#xe63c;",
+                    "href": "job/running/list?clusterName=" + clusterName
+                });
+            }
+
+            function add() {
+                layui.use(['form'],function () {
+                    layer.open({
+                        type: 2,
+                        title: '添加',
+                        maxmin: true,
+                        area: ['550px', '550px'],
+                        content: "cluster/to-create"
+                    });
+                })
+            }
+
+            function edit(id) {
+                layui.use(['form'],function () {
+                    layer.open({
+					 type: 2,
+					 title: '编辑',
+					 maxmin: true,
+					 area: ['550px', '550px'],
+					 content: "cluster/to-update?id="+id
+                     });
+                })
+            }
+
+            function detail(id) {
+                layui.use(['form'],function () {
+                    layer.open({
+                        type: 2,
+                        title: '详情',
+                        maxmin: true,
+                        area: ['550px', '480px'],
+                        content: "cluster/detail?id="+id
+                    });
+                })
+            }
+
+            function del(id) {
+                console.log(id);
+                layui.use(['form'],function () {
+                    var $ = layui.jquery;
+                    layer.open({
+                        title:"删除信息",
+                        content: '你确定要删除吗？'
+						,closeBtn:0
+                        ,btn: ['确定',"取消"]
+                        ,yes: function(index, layero){
+                            $.ajax({
+                                type:"POST",
+                                url:"/cluster/delete",
+                                data:{"id":id},
+                                dataType:"html",
+                                success:function(data){
+                                    if (data == 0) {
+                                        layer.msg('操作成功!', {
+                                            icon: 1,
+                                            time: 1000 //2秒关闭（如果不配置，默认是3秒）
+                                        }, function () {
+                                            location.reload(); //刷新
+                                        });
+                                    } else {
+                                        layer.msg('操作失败!');
+                                    }
+                                },
+                                error: function(){
+                                    layer.msg('操作失败!');
+                                }
+                            });
+                        }
+                        ,cancel: function(){
+                            return false;// 开启该代码可禁止点击该按钮关闭
+                        }
+                    });
+
+                })
+            }
+		</script>
+	</body>
+
+</html>

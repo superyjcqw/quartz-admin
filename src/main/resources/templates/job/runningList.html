@@ -1,0 +1,72 @@
+﻿<!DOCTYPE html>
+
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+	<head>
+		<base th:href='${basePath}'/>
+		<meta charset="UTF-8"/>
+		<title>当前被触发trigger</title>
+		<link rel="stylesheet" href="plugins/layui/css/layui.css" media="all" />
+		<link rel="stylesheet" href="css/global.css" media="all"/>
+		<link rel="stylesheet" href="plugins/font-awesome/css/font-awesome.min.css"/>
+		<link rel="stylesheet" href="css/table.css" />
+	</head>
+
+	<body>
+		<div class="admin-main">
+
+			<blockquote class="layui-elem-quote" style="height: 30px">
+				<form class="layui-form" style="float:right;" action="">
+					<div class="layui-form-item" style="margin:0;">
+						<label class="layui-form-label">集群名</label>
+						<div class="layui-input-inline">
+							<select name="clusterName" id="clusterName">
+								<option th:each="cluster : ${clusterList}"
+										th:value="${cluster.name}" th:text="${cluster.name}" th:selected="${clusterName==cluster.name}"></option>
+							</select>
+						</div>
+						<div class="layui-form-mid layui-word-aux" style="padding:0;">
+							<button class="layui-btn" lay-submit="" lay-filter="form">查询</button>
+						</div>
+					</div>
+				</form>
+			</blockquote>
+			<fieldset class="layui-elem-field">
+				<legend>数据列表</legend>
+				<div class="layui-field-box layui-form">
+					<table class="layui-table admin-table">
+						<thead>
+							<tr>
+								<th>序号</th>
+								<th>集群名</th>
+								<th>实例名</th>
+								<th>任务名</th>
+								<th>映射服务名</th>
+								<th>运行状态</th>
+								<th>触发时间</th>
+							</tr>
+						</thead>
+						<tbody>
+						<tr th:each="firedTrigger,list:${list}">
+							<th th:text=" ${list.index}+1"></th>
+							<th th:text="${clusterName}"></th>
+							<th th:text="${firedTrigger.schedName}"></th>
+							<th th:text="${firedTrigger.description}"></th>
+							<th th:text="${firedTrigger.jobName}"></th>
+							<th th:text="${firedTrigger.state}"></th>
+							<th th:text="${#dates.format(firedTrigger.firedTime, 'yyyy-MM-dd HH:mm:ss')}"></th>
+						</tr>
+						</tbody>
+					</table>
+				</div>
+			</fieldset>
+		</div>
+	</body>
+	<script type="text/javascript" src="plugins/layui/layui.js"></script>
+	<script th:inline="Javascript">
+
+        layui.use(['form'], function () {
+        });
+
+	</script>
+
+</html>

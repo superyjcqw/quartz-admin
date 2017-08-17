@@ -1,0 +1,54 @@
+﻿<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+	<base th:href='${basePath}'/>
+	<meta charset="UTF-8"/>
+	<title>详情</title>
+	<link rel="stylesheet" href="plugins/layui/css/layui.css" media="all"/>
+	<link rel="stylesheet" href="css/global.css" media="all"/>
+	<link rel="stylesheet" href="plugins/font-awesome/css/font-awesome.min.css"/>
+	<link rel="stylesheet" href="css/table.css"/>
+</head>
+<body>
+<div style="margin: 15px;">
+	<form class="layui-form" name="form">
+		<div class="layui-form-item">
+			<input type="hidden" name="id" th:value="${quartzCluster.id}" />
+			<label class="layui-form-label">名称</label>
+			<div class="layui-input-block">
+				<input type="text" name="name" th:value="${quartzCluster.name}" disabled="disabled" autocomplete="off"
+					   style="border: 0px;" class="layui-input"/>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">实例名</label>
+			<div class="layui-input-block">
+				<input type="text" name="instanceName" lay-verify="required" th:value="${quartzCluster.instanceName}"
+					   autocomplete="off" disabled="disabled" style="border: 0px;" class="layui-input"/>
+			</div>
+		</div>
+		<div class="layui-form-item">
+
+			<label class="layui-form-label">数据源</label>
+			<div class="layui-input-block">
+				<textarea name="dataSource" disabled="disabled" style="border: 0px;" lay-verify="dataSource" th:field ="${quartzCluster.dataSource}" class="layui-textarea"></textarea>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">远程调用地址</label>
+			<div class="layui-input-block">
+				<input type="text" name="remoteNodeHost" lay-verify="required" disabled="disabled" th:field ="${quartzCluster.remoteNodeHost}"
+					   autocomplete="off" style="border: 0px;" class="layui-input"/>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label">备注</label>
+			<div class="layui-input-block">
+				<textarea name="memo" disabled="disabled" style="border: 0px;" th:field ="${quartzCluster.memo}" class="layui-textarea"></textarea>
+			</div>
+		</div>
+	</form>
+</div>
+
+</body>
+</html>

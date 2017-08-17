@@ -1,0 +1,133 @@
+﻿<!DOCTYPE html>
+
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+
+	<head>
+		<base th:href='${basePath}'/>
+		<meta charset="UTF-8"/>
+		<title>列表</title>
+		<link rel="stylesheet" href="plugins/layui/css/layui.css" media="all" />
+		<link rel="stylesheet" href="css/global.css" media="all"/>
+		<link rel="stylesheet" href="plugins/font-awesome/css/font-awesome.min.css"/>
+		<link rel="stylesheet" href="css/table.css" />
+	</head>
+
+	<body>
+		<div class="admin-main">
+
+			<blockquote class="layui-elem-quote" style="height: 30px;width: 1100px;">
+
+				<form class="layui-form" style="float:right;width:1025px;" action="">
+					<div class="layui-form-item" style="margin:0;">
+						<label class="layui-form-label">集群名</label>
+						<div class="layui-input-inline">
+							<select name="clusterName" id="clusterName">
+								<option th:each="cluster : ${clusterList}"
+										th:value="${cluster.name}" th:text="${cluster.name}" th:selected="${clusterName==cluster.name}"></option>
+							</select>
+						</div>
+						<label class="layui-form-label">状态</label>
+						<div class="layui-input-inline">
+							<select name="status" id="status">
+								<option value=""></option>
+								<option th:each="s : ${statusMap}"
+										th:value="${s.key}" th:text="${s.value}" th:selected="${status==s.key}" ></option>
+							</select>
+						</div>
+						<label class="layui-form-label">映射服务名</label>
+						<div class="layui-input-inline">
+							<input type="text" name="jobName" id="jobName" th:value="${jobName}" autocomplete="off" class="layui-input" />
+						</div>
+						<div class="layui-form-mid layui-word-aux" style="padding:0;">
+							<button class="layui-btn" lay-submit="" lay-filter="form">查询</button>
+						</div>
+					</div>
+				</form>
+			</blockquote>
+
+			<fieldset class="layui-elem-field">
+				<legend>数据列表</legend>
+				<div class="layui-field-box layui-form">
+					<table class="layui-table admin-table">
+						<thead>
+							<tr>
+								<th>序号</th>
+								<th>集群名</th>
+								<th>实例名</th>
+								<th>映射服务名</th>
+								<th>执行状态</th>
+								<th>执行开始时间</th>
+								<th>执行结束时间</th>
+								<th>执行时长（毫秒）</th>
+								<th>异常通知状态</th>
+								<th>异常</th>
+							</tr>
+						</thead>
+						<tbody id="content2">
+						<tr th:each="item,itemStat:${list}">
+							<th th:text="${itemStat.index}+1+((${currIndex} -1 )*${pageSize})"></th>
+							<th th:text="${item.clusterName}"></th>
+							<th th:text="${item.instanceName}"></th>
+							<th th:text="${item.jobName}"></th>
+							<th th:text="${item.statusStr}"></th>
+							<th th:text="${item.beginTimeStr}"></th>
+							<th th:text="${item.endTimeStr}"></th>
+							<th th:text="${item.executeDuration}"></th>
+							<th th:text="${item.status==2?item.exceptionNoticeStatusStr:''}"></th>
+							<th th:text="${item.status==2?item.exception:''}"></th>
+						</tr>
+						</tbody>
+					</table>
+				</div>
+			</fieldset>
+			<br/>
+			<br/>
+			<div class="admin-table-page">
+				<input type="hidden" name="currIndex" th:value="${currIndex}" />
+				<input type="hidden" name="pages" th:value="${pages}" />
+				<div id="page" style="padding-left: 20px"></div>
+			</div>
+		</div>
+		<!--模板-->
+		<!--<script type="text/html" id="tpl">
+			{{# layui.each(d.list, function(index, item){ }}
+			<tr>
+				<td>{{ item.instanceName }}</td>
+				<td>{{ item.jobName }}</td>
+				<td>{{ item.statusStr }}</td>
+				<td>{{ item.beginTimeStr }}</td>
+				<td>{{ item.endTimeStr }}</td>
+				<td>{{ item.executeDuration }}</td>
+				<td>{{ item.status == 2 ? item.exceptionNoticeStatus : '' }}</td>
+				<td>{{ item.status == 2 ? item.exception : '' }}</td>
+			</tr>
+			{{# }); }}
+		</script>-->
+		<script type="text/javascript" src="plugins/layui/layui.js"></script>
+		<script th:inline="Javascript">
+
+            layui.use(['form'], function () {
+            });
+
+            layui.use(['laypage', 'layer'], function() {
+                var laypage = layui.laypage;
+                var $ = layui.jquery;
+                laypage({
+                    cont: 'page',
+                    pages: [[${pages}]],
+                    curr: [[${currIndex}]],
+                    jump: function(obj, first){//点击页码出发的事件
+                        if(!first){//是否首次进入页面
+                            var current = obj.curr;//获取点击的页码
+                            //<![CDATA[
+                            window.location.href = "/dispatch/log/list?pageIndex=" + current + "&clusterName=" + $("#clusterName").val() + "&jobName=" + $("#jobName").val() + "&status=" + $("#status").val();
+                            //]]>
+                        }
+                    }
+                });
+            });
+
+		</script>
+	</body>
+
+</html>

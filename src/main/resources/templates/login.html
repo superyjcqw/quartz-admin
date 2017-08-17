@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
+    <title>登录</title>
+    <link rel="stylesheet" href="plugins/layui/css/layui.css" media="all" />
+    <link rel="stylesheet" href="css/login.css" />
+</head>
+<body class="beg-login-bg">
+<div class="beg-login-box">
+    <header>
+        <h1>调度管理系统</h1>
+    </header>
+    <div class="beg-login-main">
+        <form action="/login" class="layui-form" method="post">
+            <div class="layui-form-item">
+                <label class="beg-login-icon">
+                    <i class="layui-icon">&#xe612;</i>
+                </label>
+                <input type="text" name="username" lay-verify="required" autocomplete="off" placeholder="这里输入登录名" class="layui-input" />
+            </div>
+            <div class="layui-form-item">
+                <label class="beg-login-icon">
+                    <i class="layui-icon">&#xe642;</i>
+                </label>
+                <input type="password" name="password" lay-verify="required" autocomplete="off" placeholder="这里输入密码" class="layui-input" />
+            </div>
+            <div class="layui-form-item">
+                <div class="beg-pull-left beg-login-remember">
+                    <label>记住帐号？</label>
+                    <input type="checkbox" name="rememberMe" value="true" lay-skin="switch" checked="checked" title="记住帐号" />
+                </div>
+                <div class="beg-pull-right">
+                    <button class="layui-btn layui-btn-primary" lay-submit="" lay-filter="form">
+                        <i class="layui-icon">&#xe650;</i> 登录
+                    </button>
+
+                </div>
+                <div class="beg-clear"></div>
+            </div>
+        </form>
+    </div>
+    <footer>
+        <p>Copyright © 2017</p>
+    </footer>
+</div>
+<script type="text/javascript" src="plugins/layui/layui.js"></script>
+<script th:inline="Javascript">
+    layui.use(['form'], function() {
+        var code = [[${code}]];
+        if (code == 1) {
+            layer.msg("账号不存在");
+        } else if (code == 2) {
+            layer.msg("密码不正确");
+        } else if (code == 3) {
+            layer.msg("账号被禁用");
+        } else if (code == 4) {
+            layer.msg("系统异常");
+        }
+
+    });
+</script>
+</body>
+
+</html>

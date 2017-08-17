@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <base th:href='${basePath}'/>
+    <meta charset="UTF-8"/>
+    <title>列表</title>
+    <link rel="stylesheet" href="plugins/layui/css/layui.css" media="all"/>
+    <link rel="stylesheet" href="css/global.css" media="all"/>
+    <link rel="stylesheet" href="plugins/font-awesome/css/font-awesome.min.css"/>
+    <link rel="stylesheet" href="css/table.css"/>
+</head>
+<body>
+<div class="admin-main">
+    <blockquote class="layui-elem-quote">
+        <a href="javascript:" onclick="add()" class="layui-btn layui-btn-small">
+            <i class="layui-icon">&#xe608;</i> 添加用户
+        </a>
+        <a href="javascript:void(0);"  onclick="location.reload()" class="layui-btn layui-btn-small" id="refresh">
+            <i class="layui-icon">&#x1002;</i> 刷新
+        </a>
+    </blockquote>
+    <fieldset class="layui-elem-field">
+        <legend>数据列表</legend>
+        <div class="layui-field-box layui-form">
+            <table class="layui-table admin-table">
+                <thead>
+                <tr>
+                    <th>序号</th>
+                    <th>用户ID</th>
+                    <th>昵称</th>
+                    <th>登录名称</th>
+                    <th>用户状态</th>
+                    <th>创建时间</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody id="content">
+                <tr th:each="user,userStat:${listUser}">
+                    <th th:text="${userStat.index}+1+((${currIndex} -1 )*${pageSize})"></th>
+                    <th th:text="${user.id}"></th>
+                    <th th:text="${user.username}"></th>
+                    <th th:text="${user.loginName}"></th>
+                    <th th:if="${user.status ==1}">正常</th>
+                    <th th:if="${user.status ==2}">禁用</th>
+                    <th th:text="${#dates.format(user.createTime, 'yyyy-MM-dd HH:mm:ss')}"></th>
+                    <th>
+                        <a href="javascript:"
+                           th:onclick="'javascript:detail(\''+${user.id}+'\')'"
+                           class="layui-btn layui-btn-normal layui-btn-mini">预览</a>
+                        <a href="javascript:" th:onclick="'javascript:edit(\''+${user.id}+'\')'"
+                           class="layui-btn layui-btn-mini">编辑</a>
+                        <a href="javascript:" th:onclick="'javascript:updatePassword(\''+${user.id}+'\')'"
+                           data-opt="edit" class="layui-btn layui-btn-mini">修改密码</a>
+                        <a href="javascript:"
+                           th:onclick="'javascript:del(\''+${user.id}+'\')'" data-id="1"
+                           data-opt="del" class="layui-btn layui-btn-danger layui-btn-mini">删除</a>
+                    </th><!--  th:href="${'user/edit-user?id='+user.id}" -->
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </fieldset>
+    <br/>
+    <br/>
+    <div class="admin-table-page">
+        <input type="hidden" name="currIndex" th:value="${currIndex}" />
+        <input type="hidden" name="pages" th:value="${pages}" />
+        <div id="page" style="padding-left: 20px"></div>
+    </div>
+</div>
+<script type="text/javascript" src="/plugins/layui/layui.js"></script>
+<script th:inline="Javascript">
+
+    layui.use(['laypage', 'layer'], function() {
+        var laypage = layui.laypage;
+        laypage({
+            cont: 'page',
+            pages: [[${pages}]],
+            curr: [[${currIndex}]],
+            jump: function(obj, first){//点击页码出发的事件
+                if(!first){//是否首次进入页面
+                    var current = obj.curr;//获取点击的页码
+                    window.location.href ="/user/list?pageIndex="+current;
+                }
+            }
+        });
+    });
+
+
+    function add() {
+        layui.use(['form'],function () {
+            layer.open({
+                type: 2,
+                title: '添加',
+                maxmin: true,
+                area: ['400px', '300px'],
+                content: "user/to-create"
+            });
+        })
+    }
+
+    function edit(id) {
+        layui.use(['form'],function () {
+            layer.open({
+                type: 2,
+                title: '编辑',
+                maxmin: true,
+                area: ['400px', '300px'],
+                content: "user/to-update?id="+id
+            });
+        })
+    }
+
+    function detail(userId) {
+        layui.use(['form'], function () {
+            layer.open({
+                type: 2,
+                title: '用户信息',
+                maxmin: true,
+                area: ['400px', '350px'],
+                content: '/user/detail?id=' + userId
+            });
+        });
+    }
+
+    function updatePassword(userId) {
+        layui.use(['form'], function () {
+            layer.open({
+                type: 2,
+                title: '修改密码',
+                maxmin: true,
+                area: ['350px', '250px'],
+                content: "user/to-update-password?id=" + userId
+            });
+        });
+    }
+
+
+    function del(id) {
+        console.log(id);
+        layui.use(['form'],function () {
+            var $ = layui.jquery;
+            layer.open({
+                title:"删除信息",
+                content: '你确定要删除吗？'
+                ,closeBtn:0
+                ,btn: ['确定',"取消"]
+                ,yes: function(index, layero){
+                    $.ajax({
+                        type:"POST",
+                        url:"/user/delete",
+                        data:{"id":id},
+                        dataType:"html",
+                        success:function(data){
+                            if (data == 0) {
+                                layer.msg('操作成功!', {
+                                    icon: 1,
+                                    time: 1000 //2秒关闭（如果不配置，默认是3秒）
+                                }, function () {
+                                    location.reload(); //刷新
+                                });
+                            } else {
+                                layer.msg('操作失败!');
+                            }
+                        },
+                        error: function(){
+                            layer.msg('操作失败!');
+                        }
+                    });
+                }
+                ,cancel: function(){
+                    return false;// 开启该代码可禁止点击该按钮关闭
+                }
+            });
+
+        })
+    }
+
+
+
+
+
+
+</script>
+
+</body>
+</html>

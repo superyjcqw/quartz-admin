@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <base href="http://localhost:8080"/>
+    <meta charset="UTF-8"/>
+    <title>详情</title>
+    <link rel="stylesheet" href="plugins/layui/css/layui.css" media="all"/>
+    <link rel="stylesheet" href="css/global.css" media="all"/>
+    <link rel="stylesheet" href="plugins/font-awesome/css/font-awesome.min.css"/>
+    <link rel="stylesheet" href="css/table.css"/>
+</head>
+<body>
+<div style="margin: 15px;">
+    <form class="layui-form" action="">
+        <div class="layui-form-item">
+            <label class="layui-form-label">报警人ID</label>
+            <div class="layui-input-block">
+                <input type="text" autocomplete="off" th:placeholder="${alarmContacts.id}" disabled="disabled"
+                       style="border: 0px;" class="layui-input"/>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">报警人名称</label>
+            <div class="layui-input-block">
+                <input type="text" autocomplete="off" th:placeholder="${alarmContacts.name}" disabled="disabled"
+                       style="border: 0px;" class="layui-input"/>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">报警人email</label>
+            <div class="layui-input-block">
+                <input type="text" autocomplete="off" th:placeholder="${alarmContacts.email}" disabled="disabled"
+                       style="border: 0px;" class="layui-input"/>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">创建时间</label>
+            <div class="layui-input-block">
+                <input type="text" autocomplete="off" th:placeholder="${alarmContacts.createTime}" disabled="disabled"
+                       style="border: 0px;" class="layui-input"/>
+            </div>
+        </div>
+    </form>
+</div>
+</body>
+</html>

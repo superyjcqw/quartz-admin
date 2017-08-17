@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <base th:href='${basePath}'/>
+    <meta charset="UTF-8"/>
+    <title>详情</title>
+    <link rel="stylesheet" href="plugins/layui/css/layui.css" media="all"/>
+    <link rel="stylesheet" href="css/global.css" media="all"/>
+    <link rel="stylesheet" href="plugins/font-awesome/css/font-awesome.min.css"/>
+    <link rel="stylesheet" href="css/table.css"/>
+</head>
+<body>
+<div style="margin: 15px;">
+    <form class="layui-form" action="">
+        <div class="layui-form-item">
+            <label class="layui-form-label">用户ID</label>
+            <div class="layui-input-block">
+                <input type="text" autocomplete="off" th:placeholder="${user.id}" disabled="disabled"
+                       style="border: 0px;" class="layui-input"/>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">用户昵称</label>
+            <div class="layui-input-block">
+                <input type="text" autocomplete="off" th:placeholder="${user.username}" disabled="disabled"
+                       style="border: 0px;" class="layui-input"/>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">用户登录名</label>
+            <div class="layui-input-block">
+                <input type="text" autocomplete="off" th:placeholder="${user.loginName}" disabled="disabled"
+                       style="border: 0px;" class="layui-input"/>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">用户状态</label>
+            <div class="layui-input-block">
+                <input type="text" autocomplete="off" th:if="${user.status==1}" placeholder="正常" disabled="disabled"
+                       style="border: 0px;" class="layui-input"/>
+                <input type="text" autocomplete="off" th:if="${user.status==2}" placeholder="禁用" disabled="disabled"
+                       style="border: 0px;" class="layui-input"/>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">创建时间</label>
+            <div class="layui-input-block">
+                <input type="text" autocomplete="off"
+                       th:placeholder="${#dates.format(user.createTime, 'yyyy-MM-dd HH:mm:ss')}" disabled="disabled"
+                       style="border: 0px;" class="layui-input"/>
+            </div>
+        </div>
+    </form>
+</div>
+</body>
+</html>

@@ -1,0 +1,332 @@
+﻿<!DOCTYPE html>
+
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+
+	<head>
+		<base th:href='${basePath}'/>
+		<meta charset="UTF-8"/>
+		<title>列表</title>
+		<link rel="stylesheet" href="plugins/layui/css/layui.css" media="all" />
+		<link rel="stylesheet" href="css/global.css" media="all"/>
+		<link rel="stylesheet" href="plugins/font-awesome/css/font-awesome.min.css"/>
+		<link rel="stylesheet" href="css/table.css" />
+	</head>
+
+	<body>
+		<div class="admin-main">
+
+			<blockquote class="layui-elem-quote" style="width: 1100px;">
+				<button type="button" class="layui-btn layui-btn-small" onclick="add(this)" >
+					<i class="fa fa-plus" aria-hidden="true"></i> 添加</button>
+
+				<form class="layui-form" style="float:right;width:1025px;" action="">
+					<div class="layui-form-item" style="margin:0;">
+						<label class="layui-form-label">集群名</label>
+						<div class="layui-input-inline">
+							<select name="clusterName" id="clusterName">
+								<option th:each="cluster : ${clusterList}"
+										th:value="${cluster.name}" th:text="${cluster.name}" th:selected="${clusterName==cluster.name}" ></option>
+							</select>
+						</div>
+						<label class="layui-form-label">状态</label>
+						<div class="layui-input-inline">
+							<select name="triggerState" id="triggerState">
+								<option value=""></option>
+								<option th:each="ts : ${triggerStateMap}"
+										th:value="${ts.key}" th:text="${ts.value}" th:selected="${triggerState==ts.key}" ></option>
+							</select>
+						</div>
+						<label class="layui-form-label">映射服务名</label>
+						<div class="layui-input-inline">
+							<input type="text" name="jobName" id="jobName" th:value="${jobName}" autocomplete="off" class="layui-input" />
+						</div>
+						<div class="layui-form-mid layui-word-aux" style="padding:0;">
+							<button class="layui-btn" lay-submit="" lay-filter="form">查询</button>
+						</div>
+					</div>
+				</form>
+			</blockquote>
+
+			<fieldset class="layui-elem-field">
+				<legend>数据列表</legend>
+				<div class="layui-field-box layui-form">
+					<table class="layui-table admin-table">
+						<thead>
+							<tr>
+								<th>序号</th>
+								<th>任务名</th>
+								<th>集群名</th>
+								<th>实例名</th>
+								<th>映射服务名</th>
+								<th>运行状态</th>
+								<th>触发器类型</th>
+								<th>表达式</th>
+								<th>上次任务执行时间</th>
+								<th>下次任务执行时间</th>
+								<th>最大执行时间(毫秒)</th>
+								<th>报警人</th>
+								<th>操作</th>
+							</tr>
+						</thead>
+						<tbody id="content2">
+
+						<tr th:each="item,itemStat:${list}">
+							<th th:text="${itemStat.index}+1+((${currIndex} -1 )*${pageSize})"></th>
+							<th th:text="${item.description}"></th>
+							<th th:text="${item.clusterName}"></th>
+							<th th:text="${item.schedName}"></th>
+							<th th:text="${item.jobName}"></th>
+							<th th:text="${item.statusStr}"></th>
+							<th th:text="${item.triggerType}"></th>
+							<th th:text="${item.triggerType=='CRON'?item.cronExpression:item.repeatInterval/1000}"></th>
+							<th th:text="${item.prevFireTimeStr}"></th>
+							<th th:text="${item.nextFireTimeStr}"></th>
+							<th th:text="${item.maxExecuteTime}"></th>
+							<th th:text="${item.alarmContactsNames}"></th>
+							<th>
+								<a href="javascript:" class="layui-btn layui-btn-mini" th:onclick="'edit(\''+${item.jobName}+'\')'">编辑</a>
+								<a href="javascript:" data-id="1" data-opt="del" class="layui-btn layui-btn-danger layui-btn-mini" th:onclick="'remove(\''+${item.jobName}+'\')'">删除</a>
+								<a href="javascript:" data-opt="edit" class="layui-btn layui-btn-mini" th:onclick="'pause(\''+${item.jobName}+'\')'">暂停</a>
+								<a href="javascript:" data-opt="edit" class="layui-btn layui-btn-mini" th:onclick="'recover(\''+${item.jobName}+'\')'">恢复</a>
+								<a href="javascript:" class="layui-btn layui-btn-danger layui-btn-mini" th:onclick="'execute(\''+${item.jobName}+'\')'">立即执行</a>
+								<!--<a href="javascript:" th:href="@{dispatch/log/list(clusterName=${item.clusterName},jobName=${item.jobName})}" class="layui-btn layui-btn-danger layui-btn-mini">调度日志</a>-->
+								<a href="javascript:" th:onclick="'toLogTab(\''+${item.clusterName}+'\',\''+${item.jobName}+'\');'" class="layui-btn layui-btn-danger layui-btn-mini">调度日志</a>
+							</th>
+						</tr>
+
+						</tbody>
+					</table>
+				</div>
+			</fieldset>
+			<br/>
+			<br/>
+			<div class="admin-table-page">
+			<input type="hidden" name="currIndex" th:value="${currIndex}" />
+			<input type="hidden" name="pages" th:value="${pages}" />
+			<div id="page" style="padding-left: 20px"></div>
+			</div>
+		</div>
+		<script type="text/javascript" src="plugins/layui/layui.js"></script>
+		<script th:inline="Javascript">
+            layui.use(['form'], function () {
+			});
+
+            layui.use(['laypage', 'layer'], function() {
+                var laypage = layui.laypage;
+                var $ = layui.jquery;
+                laypage({
+                    cont: 'page',
+                    pages: [[${pages}]],
+                    curr: [[${currIndex}]],
+                    jump: function(obj, first){//点击页码出发的事件
+                        if(!first){//是否首次进入页面
+                            var current = obj.curr;//获取点击的页码
+                            //<![CDATA[
+                            window.location.href ="/job/list?pageIndex="+current +"&clusterName=" + $("#clusterName").val() + "&triggerState=" + $("#triggerState").val() + "&jobName=" + $("#jobName").val();
+							//]]>
+
+                        }
+                    }
+                });
+            });
+
+            function toLogTab(clusterName, jobName) {
+                var tab = parent.tab;
+                var tabId = tab.getTabId('调度日志');
+                if (tabId != -1) {
+                    tab.deleteTab(tabId);
+                }
+                //<![CDATA[
+                tab.tabAdd({
+                    "title": "调度日志",
+                    "icon": "&#xe63c;",
+                    "href": "dispatch/log/list?clusterName=" + clusterName + "&jobName=" + jobName
+                });
+                //]]>
+            }
+
+            //添加
+			function add() {
+				layui.use(['form'],function () {
+                    var $ = layui.jquery;
+					layer.open({
+						type: 2,
+						title: '添加',
+						maxmin: true,
+						area: ['550px', '450px'],
+						content: "job/to-create?clusterName="+ $("#clusterName").val()
+					});
+				})
+			}
+
+			//编辑
+            function edit(jobName) {
+                layui.use(['form'],function () {
+                    var $ = layui.jquery;
+                    layer.open({
+                        type: 2,
+                        title: '编辑',
+                        maxmin: true,
+                        area: ['550px', '450px'],
+                        content: "job/to-update?clusterName=" + $("#clusterName").val() + "&amp;jobName=" + jobName
+                    });
+                })
+            }
+
+            // 删除处理
+            function remove(jobName){
+                var $ = layui.jquery;
+                // 获取数据
+
+                layer.open({
+                    title: '删除',
+                    content: '任务删除须谨慎，确认要删除吗？',
+                    closeBtn: 0,
+                    btn: ['确定', '取消'],
+                    yes: function(){
+                        $.ajax({
+                            url:"/job/delete",
+                            type:"post",
+                            data: {
+                                clusterName: $("#clusterName").val(),
+                                jobName: jobName,
+                            },
+                            success:function(data){
+                                if (data) {
+                                    layer.msg('操作成功!', {
+                                        icon: 1,
+                                        time: 1000 //2秒关闭（如果不配置，默认是3秒）
+                                    }, function () {
+                                        location.reload(); //刷新
+                                    });
+                                } else {
+                                    layer.msg('操作失败!');
+								}
+                            },
+                            error:function(e){
+                                layer.msg('操作失败!');
+                            }
+                        });
+                        layer.closeAll();
+                    }
+                    , cancel: function () {
+                        return false;// 开启该代码可禁止点击该按钮关闭
+                    }
+                });
+            }
+
+            // 暂停处理
+            function pause(jobName){
+                var $ = layui.jquery;
+                // 获取数据
+                layer.open({
+                    title: '暂停',
+                    content: '任务暂停须谨慎，确认要暂停吗？',
+                    btn: ['确定', '取消'],
+                    closeBtn: 0,
+                    yes: function(){
+                        $.ajax({
+                            url:"/job/pause",
+                            type:"post",
+                            data: {
+                                clusterName: $("#clusterName").val(),
+                                jobName: jobName
+                            },
+                            success:function(data){
+                                if (data) {
+                                    layer.msg('操作成功!', {
+                                        icon: 1,
+                                        time: 1000 //2秒关闭（如果不配置，默认是3秒）
+                                    }, function () {
+                                        location.reload(); //刷新
+                                    });
+                                } else {
+                                    layer.msg('操作失败!');
+                                }
+                            },
+                            error:function(e){
+                                layer.msg('操作失败!');
+                            }
+                        });
+                        layer.closeAll();
+                    }
+                });
+            }
+            // 恢复处理
+            function recover(jobName){
+                var $ = layui.jquery;
+                layer.open({
+                    title: '恢复',
+                    content: '任务恢复须谨慎，确认要恢复吗？',
+                    btn: ['确定', '取消'],
+                    closeBtn: 0,
+                    yes: function(){
+                        $.ajax({
+                            url:"/job/recover",
+                            type:"post",
+                            data: {
+                                clusterName: $("#clusterName").val(),
+                                jobName: jobName
+                            },
+                            success:function(data){
+                                if (data) {
+                                    layer.msg('操作成功!', {
+                                        icon: 1,
+                                        time: 1000 //2秒关闭（如果不配置，默认是3秒）
+                                    }, function () {
+                                        location.reload(); //刷新
+                                    });
+                                } else {
+                                    layer.msg('操作失败!');
+                                }
+                            },
+                            error:function(e){
+                                layer.msg('操作失败!');
+                            }
+                        });
+                        layer.closeAll();
+                    }
+                });
+            }
+
+            // 理解执行处理
+            function execute(jobName){
+                var $ = layui.jquery;
+                layer.open({
+                    title: '立即执行',
+                    content: '任务立即执行须谨慎，确认要执行吗？',
+                    btn: ['确定', '取消'],
+                    closeBtn: 0,
+                    yes: function(){
+                        $.ajax({
+                            url:"/job/execute",
+                            type:"post",
+                            data: {
+                                clusterName: $("#clusterName").val(),
+                                jobName: jobName
+                            },
+                            success:function(data){
+                                if (data) {
+                                    layer.msg('操作成功!', {
+                                        icon: 1,
+                                        time: 1000 //2秒关闭（如果不配置，默认是3秒）
+                                    }, function () {
+                                        location.reload(); //刷新
+                                    });
+                                } else {
+                                    layer.msg('操作失败!');
+                                }
+                            },
+                            error:function(e){
+                                layer.msg('操作失败!');
+                            }
+                        });
+                        layer.closeAll();
+                    }
+                });
+            }
+
+		</script>
+	</body>
+
+</html>
