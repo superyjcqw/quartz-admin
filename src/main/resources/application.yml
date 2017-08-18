@@ -14,7 +14,7 @@ spring:
     suffix: .html
     excluded-view-names:
     template-resolver-order:
-  DATASOURCE:
+  datasource:
     url : jdbc:mysql://192.168.16.193:3306/quartz-admin?characterEncoding=utf-8
     username : username
     password : password
