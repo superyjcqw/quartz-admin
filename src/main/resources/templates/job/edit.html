@@ -22,7 +22,7 @@
 		<div class="layui-form-item">
 			<label class="layui-form-label">映射服务名</label>
 			<div class="layui-input-block">
-				<input type="text" name="jobName" placeholder="请输入" th:value="${job.jobName}" autocomplete="off" class="layui-input" />
+				<input type="text" disabled="disabled" name="jobName" placeholder="请输入" th:value="${job.jobName}" autocomplete="off" class="layui-input" />
 			</div>
 		</div>
 		<div class="layui-form-item">
@@ -108,7 +108,7 @@
                         });
                     } else {
                         layer.msg('操作失败!');
-					}
+                    }
 
                 },
                 error: function () {
