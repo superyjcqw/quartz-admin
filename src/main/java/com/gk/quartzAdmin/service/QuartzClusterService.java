@@ -24,7 +24,7 @@ public class QuartzClusterService {
     private QuartzClusterDataSourcePool quartzClusterDataSourcePool;
 
     @Autowired
-    private QuartzSchedulerStateService qrtzSchedulerRtateService;
+    private QuartzSchedulerStateService quartzSchedulerStateService;
 
     private static List<QuartzCluster> cacheList = new ArrayList<>();
 
@@ -105,7 +105,7 @@ public class QuartzClusterService {
         Map<String, Integer> nodeNum = new HashMap<>();
         //根据集群名称获取对应的节点数
         for (QuartzCluster quartzCluster : quartzClusterList) {
-            List<SchedulerState> schedulerStateList = qrtzSchedulerRtateService.list(quartzCluster.getName(), quartzCluster.getInstanceName());
+            List<SchedulerState> schedulerStateList = quartzSchedulerStateService.list(quartzCluster.getName(), quartzCluster.getInstanceName());
             //处理集群节点数
             Set<String> nameNodeSet = new HashSet<>();
             for (SchedulerState schedulerState : schedulerStateList) {
