@@ -40,7 +40,7 @@
                     <th th:text="${#dates.format(alarmContacts.createTime, 'yyyy-MM-dd HH:mm:ss')}"></th>
                     <th>
                         <a href="javascript:" th:onclick="'javascript:edit(\''+${alarmContacts.id}+'\')'"
-                           class="layui-btn layui-btn-mini">编辑</a>
+                           class="layui-btn layui-btn-mini" style="margin-left: 10px;">编辑</a>
                         <a href="javascript:" th:onclick="'javascript:del(\''+${alarmContacts.id}+'\')'"
                            class="layui-btn layui-btn-danger layui-btn-mini">删除</a>
                     </th>

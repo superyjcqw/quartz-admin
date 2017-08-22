@@ -84,7 +84,7 @@
 							<th th:text="${item.maxExecuteTime}"></th>
 							<th th:text="${item.alarmContactsNames}"></th>
 							<th>
-								<a href="javascript:" class="layui-btn layui-btn-mini" th:onclick="'edit(\''+${item.jobName}+'\')'">编辑</a>
+								<a href="javascript:" class="layui-btn layui-btn-mini" style="margin-left: 10px;" th:onclick="'edit(\''+${item.jobName}+'\')'">编辑</a>
 								<a href="javascript:" data-id="1" data-opt="del" class="layui-btn layui-btn-danger layui-btn-mini" th:onclick="'remove(\''+${item.jobName}+'\')'">删除</a>
 								<a href="javascript:" data-opt="edit" class="layui-btn layui-btn-mini" th:onclick="'pause(\''+${item.jobName}+'\')'">暂停</a>
 								<a href="javascript:" data-opt="edit" class="layui-btn layui-btn-mini" th:onclick="'recover(\''+${item.jobName}+'\')'">恢复</a>

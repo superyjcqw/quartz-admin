@@ -47,7 +47,7 @@
 							<th th:text="${quartzCluster.nodeNum}"></th>
 							<th th:text="${quartzCluster.memo}"></th>
 							<th>
-								<a href="javascript:" th:onclick="'detail(\''+${quartzCluster.id}+'\');'" class="layui-btn layui-btn-normal layui-btn-mini">预览</a>
+								<a href="javascript:" th:onclick="'detail(\''+${quartzCluster.id}+'\');'" class="layui-btn layui-btn-normal layui-btn-mini" style="margin-left: 10px;">预览</a>
 								<a href="javascript:" th:onclick="'edit(\''+${quartzCluster.id}+'\');'" class="layui-btn layui-btn-mini">编辑</a>
 								<a href="javascript:" th:onclick="'del(\''+${quartzCluster.id}+'\');'" class="layui-btn layui-btn-danger layui-btn-mini">删除</a>
 								<a href="javascript:" th:onclick="'toJobListTab(\''+${quartzCluster.name}+'\');'" class="layui-btn layui-btn-danger layui-btn-mini">任务列表</a>
