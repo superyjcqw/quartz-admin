@@ -118,4 +118,4 @@ SET FOREIGN_KEY_CHECKS = 1;
 
 
 
-INSERT INTO `user` VALUES ('1', '管理员', 'admin', '1a88a2e5e3cec1f4d4fba1479c198fc3', '2017-07-13 14:40:25', '1');
+INSERT INTO `user` VALUES ('1', '管理员', 'admin', '94d93838bf68891a073ad9c64b7d31cc', '2017-07-13 14:40:25', '1');
