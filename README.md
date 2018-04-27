@@ -21,7 +21,7 @@
 2.  **配置application.yml内数据源、邮件等**
 3.  **执行resource/sql内quartz-admin.sql文件初始化数据库，默认用户名admin,密码112233**
 4.  **main方法启动Application类**
-5.  **quartz执行端提供job管理的http接口供平台调用**
+5.  **quartz执行端[(demo传送门)](https://github.com/superyjcqw/scheduler).提供job管理的http接口供平台调用**
 6.  **quartz执行端把调度日志插入平台数据库**
 7.  **登录系统在集群管理中添加quartz集群(集群名作为集群唯一标识，最好不要修改)，远程调用节点使用步骤5中的地址**
 8.  **配置报警人，每个job可独立配置报警人，若不配置默认发给第一个报警人**
